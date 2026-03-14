@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상세페이지 자동생성 - 타오바오 URL 하나로 쿠팡 상세페이지 5분 완성</title>
+  <meta name="description" content="해외구매대행 셀러를 위한 상세페이지 자동생성 앱. 타오바오 URL만 넣으면 번역, 카피, 디자인까지 자동 완성.">
+  <meta property="og:title" content="상세페이지 자동생성 - URL 하나로 5분 완성">
+  <meta property="og:description" content="중국어 번역, 카피라이팅, 디자인까지. 타오바오 URL 하나면 끝.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 20px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,107,53,0.3);
+      background: rgba(255,107,53,0.08);
+      color: #ff8c4a;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #ff6b35;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 8vw, 56px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(135deg, #ff6b35, #ff9a5c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 18px;
+      color: #999;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+    .hero-stat {
+      display: flex;
+      gap: 32px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .hero-stat div {
+      text-align: center;
+    }
+    .hero-stat .num {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ff6b35;
+    }
+    .hero-stat .label {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* Pain */
+    .pain {
+      padding: 80px 20px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ff6b35;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .pain h2 {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      margin-bottom: 40px;
+      line-height: 1.3;
+    }
+    .pain-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .pain-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px;
+      background: #141414;
+      border-radius: 16px;
+      border: 1px solid #222;
+    }
+    .pain-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      width: 40px;
+      text-align: center;
+    }
+    .pain-list li strong {
+      display: block;
+      color: #fff;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+    .pain-list li span {
+      font-size: 14px;
+      color: #888;
+    }
+
+    /* Solution */
+    .solution {
+      padding: 80px 20px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .solution h2 {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      margin-bottom: 48px;
+      line-height: 1.3;
+    }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ff6b35, #ff9a5c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .step-content h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .step-content p {
+      font-size: 15px;
+      color: #888;
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 20px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .features h2 {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      margin-bottom: 48px;
+      line-height: 1.3;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 480px) {
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .feature-card {
+      padding: 24px;
+      background: #141414;
+      border-radius: 16px;
+      border: 1px solid #222;
+    }
+    .feature-card .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: #888;
+    }
+
+    /* Compare */
+    .compare {
+      padding: 80px 20px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .compare h2 {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      margin-bottom: 48px;
+      line-height: 1.3;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .compare-table th {
+      padding: 14px 12px;
+      text-align: left;
+      color: #666;
+      font-weight: 400;
+      border-bottom: 1px solid #222;
+    }
+    .compare-table th:last-child {
+      color: #ff6b35;
+      font-weight: 700;
+    }
+    .compare-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .compare-table td:first-child {
+      color: #ccc;
+      font-weight: 700;
+    }
+    .compare-table td:nth-child(2) {
+      color: #666;
+    }
+    .compare-table td:last-child {
+      color: #ff8c4a;
+      font-weight: 700;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 100px 20px;
+      text-align: center;
+      position: relative;
+    }
+    .cta::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: clamp(28px, 7vw, 44px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      line-height: 1.2;
+      position: relative;
+    }
+    .cta p {
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 40px;
+      background: linear-gradient(135deg, #ff6b35, #e85d2a);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,107,53,0.3);
+    }
+    .cta-sub {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #555;
+      position: relative;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 20px;
+      text-align: center;
+      color: #444;
+      font-size: 13px;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      해외구매대행 셀러 전용
+    </div>
+    <h1>
+      상세페이지 만드느라<br>
+      <span class="accent">몇 시간 쓰고 계신가요?</span>
+    </h1>
+    <p>
+      타오바오 URL 하나 넣으면<br>
+      번역, 카피, 디자인까지 자동으로.<br>
+      <strong style="color:#fff">5분이면 끝납니다.</strong>
+    </p>
+    <div class="hero-stat">
+      <div>
+        <div class="num">5분</div>
+        <div class="label">평균 제작 시간</div>
+      </div>
+      <div>
+        <div class="num">8섹션</div>
+        <div class="label">고전환 구성</div>
+      </div>
+      <div>
+        <div class="num">0원</div>
+        <div class="label">디자이너 비용</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pain Points -->
+  <section class="pain">
+    <div class="section-label">Problem</div>
+    <h2>구매대행 셀러라면<br>다 겪는 문제</h2>
+    <ul class="pain-list">
+      <li>
+        <div class="pain-icon">🇨🇳</div>
+        <div>
+          <strong>중국어 번역</strong>
+          <span>상세 이미지 속 중국어를 하나하나 지우고, 번역하고, 다시 넣고. 한 상품에 30분.</span>
+        </div>
+      </li>
+      <li>
+        <div class="pain-icon">✍️</div>
+        <div>
+          <strong>카피 작성</strong>
+          <span>"뭐라고 써야 팔리지?" 매번 고민. 결국 대충 쓰거나 다른 셀러 거 베끼게 됨.</span>
+        </div>
+      </li>
+      <li>
+        <div class="pain-icon">🎨</div>
+        <div>
+          <strong>디자인</strong>
+          <span>미리캔버스 열고 템플릿 찾고 수정하고... 상세페이지 하나에 2~3시간 날림.</span>
+        </div>
+      </li>
+      <li>
+        <div class="pain-icon">📦</div>
+        <div>
+          <strong>상품이 많을수록 지옥</strong>
+          <span>10개 올리려면 이틀. 100개는 엄두도 못 냄. 결국 대충 올리고 안 팔림.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Solution Steps -->
+  <section class="solution">
+    <div class="section-label">Solution</div>
+    <h2>URL 하나로<br>전부 자동화됩니다</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>타오바오 URL 붙여넣기</h3>
+          <p>소싱한 상품의 타오바오/1688 링크만 넣으세요.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>AI가 자동으로 분석</h3>
+          <p>이미지 수집, 중국어 OCR 번역, 카피라이팅, 배경색 추출까지 전부 자동.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>8섹션 상세페이지 완성</h3>
+          <p>문제제기 → 제품소개 → 혜택 → 리뷰 → 비교표 → CS까지. 전환율 높은 구성으로.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>쿠팡/스마트스토어 등록</h3>
+          <p>완성된 상세페이지를 바로 플랫폼에 업로드. 끝.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="section-label">Features</div>
+    <h2>셀러가 진짜<br>필요한 기능만</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">🔤</div>
+        <h3>자동 OCR 번역</h3>
+        <p>이미지 속 중국어를 자동 인식하고 자연스러운 한국어로 변환</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧠</div>
+        <h3>AI 카피라이팅</h3>
+        <p>심리학 기반 고전환 카피. 후킹, 베네핏, 리뷰까지 자동 생성</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎬</div>
+        <h3>영상 자동 추출</h3>
+        <p>타오바오 상품 영상을 GIF로 변환해 상세페이지에 자동 삽입</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>경쟁사 비교표</h3>
+        <p>자사 강점 vs 경쟁 약점. 구매 결정을 돕는 비교표 자동 생성</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎨</div>
+        <h3>자동 디자인</h3>
+        <p>배경색, 텍스트 색상, 레이아웃을 상품에 맞게 자동 결정</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🚀</div>
+        <h3>원클릭 등록</h3>
+        <p>쿠팡, 스마트스토어에 상세페이지 바로 업로드</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compare -->
+  <section class="compare">
+    <div class="section-label">Compare</div>
+    <h2>직접 만들기 vs<br>자동생성</h2>
+    <table class="compare-table">
+      <tr>
+        <th>항목</th>
+        <th>직접 제작</th>
+        <th>자동생성</th>
+      </tr>
+      <tr>
+        <td>제작 시간</td>
+        <td>2~3시간</td>
+        <td>5분</td>
+      </tr>
+      <tr>
+        <td>중국어 번역</td>
+        <td>수동 (파파고)</td>
+        <td>OCR 자동</td>
+      </tr>
+      <tr>
+        <td>카피라이팅</td>
+        <td>직접 작성</td>
+        <td>AI 자동</td>
+      </tr>
+      <tr>
+        <td>디자인</td>
+        <td>미리캔버스 수작업</td>
+        <td>자동 생성</td>
+      </tr>
+      <tr>
+        <td>100개 상품</td>
+        <td>2~3주</td>
+        <td>1~2일</td>
+      </tr>
+      <tr>
+        <td>비용</td>
+        <td>외주 시 3~5만/건</td>
+        <td>무료~월 9,900원</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>
+      관심 있으시면<br>
+      <span style="background:linear-gradient(135deg,#ff6b35,#ff9a5c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">DM 주세요</span>
+    </h2>
+    <p>현재 베타 테스트 준비 중입니다.<br>먼저 써보고 싶은 셀러분들을 모집하고 있어요.</p>
+    <a href="https://www.threads.net/@unjoy.s" target="_blank" class="cta-btn">
+      스레드에서 DM 보내기 →
+    </a>
+    <div class="cta-sub">무료 베타 테스트 · 선착순 모집</div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Make:Base &copy; 2026 · 해외구매대행 셀러를 위한 자동화 도구</p>
+  </footer>
+
+</body>
+</html>
